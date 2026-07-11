@@ -1,0 +1,57 @@
+{
+  "name": "automation_excercise_playwright",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "homepage": "https://github.com/qakaransharma/Automation_excercise_playwright#readme",
+  "bugs": {
+    "url": "https://github.com/qakaransharma/Automation_excercise_playwright/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qakaransharma/Automation_excercise_playwright.git"
+  },
+  "license": "ISC",
+  "author": "Karan Sharma",
+  "type": "commonjs",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:stage": "cross-env ENV=stage npx playwright test",
+    "test:qa": "cross-env ENV=qa npx playwright test && npm run allure:generate && npm run allure:open",
+    "report:playwright": "npx playwright show-report",
+    "allure:generate": "allure generate allure-results -o allure-report --clean",
+    "allure:open": "allure open allure-report",
+    "allure:serve": "allure serve allure-report",
+    "clean:allure": "if exist allure-results (rmdir /s /q allure-results) && if exist allure-report (rmdir /s /q allure-report)"
+  },
+  "dependencies": {
+    "allure-js-commons": "^3.10.2",
+    "charenc": "^0.0.2",
+    "cross-spawn": "^7.0.6",
+    "crypt": "^0.0.2",
+    "is-buffer": "^1.1.6",
+    "isexe": "^2.0.0",
+    "md5": "^2.3.0",
+    "path-key": "^3.1.1",
+    "playwright": "^1.61.1",
+    "playwright-core": "^1.61.1",
+    "shebang-command": "^2.0.0",
+    "shebang-regex": "^3.0.0",
+    "undici-types": "^7.24.6",
+    "which": "^2.0.2"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^10.5.0",
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^25.9.1",
+    "allure-commandline": "^2.41.0",
+    "allure-playwright": "^3.10.2",
+    "cross-env": "^10.1.0",
+    "prettier": "^3.8.3"
+  }
+}
