@@ -25,18 +25,16 @@ test.describe("Verify Products", () => {
 
     // Navigate to Products page
     await navbarPage.clickNavbarItem("Products");
-    expect(await productsPage.isAllProductsHeaderVisible()).toBeTruthy();
-    expect(await productsPage.isProductsListVisible()).toBeTruthy();
+    await expect(productsPage.allProductsHeader).toBeVisible();
+    await expect(productsPage.productsList).toBeVisible();
 
     // View first product
     await productsPage.clickViewProductOfFirstProduct();
 
     // Verify product details
-    expect(await productsDetailsPage.isProductsDetailsVisible()).toBeTruthy();
-    expect(await productsDetailsPage.isProductNameVisible()).toBeTruthy();
-    expect(
-      await productsDetailsPage.isProductCategoryVisible(),
-    ).toBeTruthy();
+    await expect(productsDetailsPage.productDetailsSection).toBeVisible();
+    await expect(productsDetailsPage.productName).toBeVisible();
+    await expect(productsDetailsPage.productCategory).toBeVisible();
 
     // Verify product name matches expected
     const productDetailsObj = await productsDetailsPage.getProductDetails();

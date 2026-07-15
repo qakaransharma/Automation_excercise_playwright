@@ -6,12 +6,12 @@ test("verify user logout after login in application", async ({
   logoutPage,
 }) => {
   await logoutPage.navigateTo("/");
-  expect(await logoutPage.isLogoutLinkVisible()).toBeTruthy();
+  await expect(logoutPage.lnkLogout).toBeVisible();
 
   // Perform logout
   await logoutPage.logout();
 
   // Verify user is logged out
-  expect(await logoutPage.isSignupLoginLinkVisible()).toBeTruthy();
+  await expect(logoutPage.lnkSignupLogin).toBeVisible();
   expect(page).toHaveURL(`${currentEnv.baseUrl}/login`);
 });
