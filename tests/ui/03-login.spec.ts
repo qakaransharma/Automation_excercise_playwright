@@ -1,21 +1,20 @@
-import { test, expect } from "../../src/fixture/pagesFixture";
-import { currentEnv } from "../../src/config/environment/env";
+import { test, expect } from "../../src/fixture/generatedUserFixture";
 
-test("verify login with valid credentials", async ({
-  loginPage,
-  navbarPage,
-}) => {
+test.describe("login flow", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
 
-  // 1. Click on Login button 
-  await navbarPage.clickNavbarItem("Login");
+  test.beforeEach(async ({ loginPage }) => {
+    await loginPage.navigateTo("/login");
+  });
 
-  // 2. Perform Login using page object
-  await loginPage.loginToApp(currentEnv.emailAddress, currentEnv.password);
+  test("verify login with valid credentials", async ({
+    loginPage,
+    navbarPage,
+    generatedUser,
+  }) => {
+    await loginPage.loginToApp(generatedUser.emailAddress, generatedUser.password);
 
-  // 3. Verify user is successfully logged in (Logout link becomes visible)
-  const isLogoutButtonVisible = await navbarPage.isNavbarVisible("Logout");
-
-  expect(isLogoutButtonVisible).toBeTruthy();
+    const isLogoutButtonVisible = await navbarPage.isNavbarVisible("Logout");
+    expect(isLogoutButtonVisible).toBeTruthy();
+  });
 });
-
-

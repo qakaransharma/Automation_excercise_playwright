@@ -17,7 +17,11 @@ export default defineConfig({
   fullyParallel: FULLY_PARALLEL,
   retries: RETRIES,
   workers: WORKERS,
-  reporter: REPORTER_CONFIG,
+  reporter: [
+    ["html", { open: "never", outputFolder: "reports/playwright" }],
+    ["allure-playwright", { outputFolder: "reports/allure-results" }],
+  ],
+  outputDir: "./test-results",
 
   use: {
     navigationTimeout: 45000, // 45s for page.goto (default is 30s)
@@ -36,8 +40,17 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: "setup",
+      testMatch: /auth\.setup\.ts/,
+    },
+
+    {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "auth/user.json",
+      },
+      dependencies: ["setup"],
     },
 
     // {

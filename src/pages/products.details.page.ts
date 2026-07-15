@@ -1,15 +1,14 @@
 import { Locator, Page } from "@playwright/test";
-import { CommonUtils } from "../utils/commonUtils";
+import { BasePage } from "./base.page";
 
-export class ProductsDetailsPage {
-  readonly page: Page;
+export class ProductsDetailsPage extends BasePage {
   readonly productDetailsSection: Locator;
   readonly productName: Locator;
   readonly productCategory: Locator;
 
   constructor(page: Page) {
-    this.page = page;
-    this.productDetailsSection = page.locator("[class='product-details']");
+    super(page);
+    this.productDetailsSection = page.locator(".product-details");
     this.productName = page.locator("div[class='product-information'] h2");
     this.productCategory = page.locator(
       "//div[@class='product-information']//p[contains(text(), 'Category:')]",
@@ -17,30 +16,29 @@ export class ProductsDetailsPage {
   }
 
   async isProductsDetailsVisible(): Promise<boolean> {
-    // return await this.productDetailsSection.isVisible();
-    return await CommonUtils.isVisible(this.productDetailsSection);
+    return this.productDetailsSection.isVisible();
   }
 
   async isProductNameVisible(): Promise<boolean> {
-    // return await this.productName.isVisible();
-    return await CommonUtils.isVisible(this.productName);
+    return this.productName.isVisible();
   }
 
   async isProductCategoryVisible(): Promise<boolean> {
-    return await CommonUtils.isVisible(this.productCategory);
+    return this.productCategory.isVisible();
   }
 
   async getProductName(): Promise<string> {
-    // return (await this.productName.textContent()) || "";
-    return await CommonUtils.getText(this.productName);
+    return (await this.productName.textContent())?.trim() ?? "";
+  }
+
+  async getProductCategory(): Promise<string> {
+    return (await this.productCategory.textContent())?.trim() ?? "";
   }
 
   async getProductDetails() {
-    const productDetailsObj = {
+    return {
       productName: await this.getProductName(),
-      productCategory: await this.getProductName(),
+      productCategory: await this.getProductCategory(),
     };
-
-    return productDetailsObj;
   }
 }

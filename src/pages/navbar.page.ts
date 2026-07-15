@@ -1,22 +1,20 @@
 import { Locator, Page } from "@playwright/test";
+import { BasePage } from "./base.page";
 
-export class NavbarPage {
-  readonly page: Page;
-
+export class NavbarPage extends BasePage {
   constructor(page: Page) {
-    this.page = page;
+    super(page);
   }
 
-  // returning a locator
   navbarItem(itemName: string): Locator {
-    return this.page.locator(`a:has-text("${itemName}")`);
+    return this.page.getByRole("link", { name: itemName });
   }
 
   async clickNavbarItem(itemName: string): Promise<void> {
-    return await this.navbarItem(itemName).click();
+    await this.navbarItem(itemName).click();
   }
 
   async isNavbarVisible(itemName: string): Promise<boolean> {
-    return await this.navbarItem(itemName).isVisible();
+    return this.navbarItem(itemName).isVisible();
   }
 }

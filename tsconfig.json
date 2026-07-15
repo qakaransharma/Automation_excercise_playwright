@@ -5,7 +5,13 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node", "@playwright/test"],
+    "paths": {
+      "@pages/*": ["./src/pages/*"],
+      "@config/*": ["./src/config/*"],
+      "@fixtures/*": ["./src/fixture/*"],
+      "@test-data/*": ["./test-data/*"]
+    }
   },
   "include": ["**/*.ts"]
 }

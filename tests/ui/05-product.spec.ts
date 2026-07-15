@@ -10,37 +10,36 @@ const productDetails = JSON.parse(
 ) as { productName: string };
 
 test.describe("Verify Products", () => {
+  test.beforeEach(async ({ productsPage }) => {
+    await productsPage.navigateTo("/");
+  });
+
   test("Verify All Products and product detail page", async ({
-    page,
-    navbarPage,
     productsPage,
     productsDetailsPage,
+    navbarPage,
   }) => {
-    // Verify that home page is visible successfully
-    const homePageTitle = await page.title();
+    // Verify home page is visible
+    const homePageTitle = await productsPage.getPageTitle();
     expect(homePageTitle).toContain("Automation Exercise");
 
-    // Click on 'Products' button
+    // Navigate to Products page
     await navbarPage.clickNavbarItem("Products");
     expect(await productsPage.isAllProductsHeaderVisible()).toBeTruthy();
     expect(await productsPage.isProductsListVisible()).toBeTruthy();
 
+    // View first product
     await productsPage.clickViewProductOfFirstProduct();
 
-    // Verify Product details container is displayed
+    // Verify product details
     expect(await productsDetailsPage.isProductsDetailsVisible()).toBeTruthy();
-
-    // Verify Product name and Category labels are displayed
     expect(await productsDetailsPage.isProductNameVisible()).toBeTruthy();
-    expect(await productsDetailsPage.isProductCategoryVisible()).toBeTruthy();
+    expect(
+      await productsDetailsPage.isProductCategoryVisible(),
+    ).toBeTruthy();
 
-    const actualProductName = await productsDetailsPage.getProductName();
-
-    console.log("productDetails.productName::", productDetails.productName);
-    expect(actualProductName).toBe(productDetails.productName);
-
+    // Verify product name matches expected
     const productDetailsObj = await productsDetailsPage.getProductDetails();
-
     expect(productDetailsObj.productName).toBe(productDetails.productName);
   });
 });

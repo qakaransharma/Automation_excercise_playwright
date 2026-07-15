@@ -6,5 +6,29 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Allure
 /allure-report/
 /allure-results/
+
+# Reports (Docker output)
+/reports/
+
+# Auth state
+/auth/
+
+# Logs
+/logs/
+
+# Environment secrets
+.env
+
+# Generated test credentials
+test-data/generatedUser.json
+
+# Screenshots (auto-generated)
+screenshots/
+
+# OS files
+.DS_Store
+Thumbs.db

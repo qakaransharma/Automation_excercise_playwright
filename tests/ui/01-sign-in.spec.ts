@@ -1,93 +1,72 @@
-import { currentEnv } from "../../src/config/environment/env";
+import { readFileSync } from "fs";
+import { join } from "path";
 import { test, expect } from "../../src/fixture/pagesFixture";
 import { faker } from "@faker-js/faker";
 
-test("verify user signup and registration flow", async ({ page, navbarPage }) => {
+const userData = JSON.parse(
+  readFileSync(join(process.cwd(), "test-data/userData.json"), "utf8"),
+);
 
-  // 1. Navigate to URL
-  await page.goto("https://automationexercise.com/login");
+test.describe("sign-up flow", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
 
-  // 2. Click on Signup / Login button
-  await navbarPage.clickNavbarItem("Signup / Login");
+  test.beforeEach(async ({ signInPage }) => {
+    await signInPage.navigateTo("/login");
+  });
 
-  // use of random data for user signup used 2 different ways 
-  // 1. Generate unique email to avoid "Email Address already exist" error
-  const uniqueEmail = `testuser_${Date.now()}@email.com`;
-  // used faker class to generate random strings
-  const name = faker.person.fullName();
+  test("verify user signup and registration flow", async ({
+    signInPage,
+  }) => {
+    // Enter signup details with unique email
+    const name = faker.person.fullName();
+    const uniqueEmail = `testuser_${Date.now()}@email.com`;
 
+    await signInPage.enterSignupDetails(name, uniqueEmail);
+    await signInPage.clickSignup();
 
-  // 3. Enter data in name and email for signup
-  await page.locator("input[data-qa='signup-name']").fill(name);
-  await page.locator("input[data-qa='signup-email']").fill(uniqueEmail);
+    // Verify account information form
+    await expect(signInPage.lblAccountInfo).toBeVisible();
 
-  // 4. Click Signup button
-  await page.locator("button[data-qa='signup-button']").click();
+    // Fill account details
+    await signInPage.fillAccountDetails(
+      userData.signup.password,
+      userData.signup.day,
+      userData.signup.month,
+      userData.signup.year,
+    );
 
-  // 5. Fill out the account details to fully sign up
-  await expect(page.locator("text=Enter Account Information")).toBeVisible();
+    // Fill address details
+    await signInPage.fillAddressDetails(userData.address);
 
-  // Select title
-  await page.locator("#id_gender1").click(); // Mr.
+    // Create account
+    await signInPage.clickCreateAccount();
 
-  // Password
-  await page.locator("input[data-qa='password']").fill("SecurePassword123");
+    // Verify account created
+    await expect(signInPage.lblAccountCreated).toBeVisible();
+    await expect(signInPage.lblAccountCreated).toHaveText("Account Created!");
 
-  // Date of Birth
-  await page.locator("select[data-qa='days']").selectOption("10");
-  await page.locator("select[data-qa='months']").selectOption("5"); // May
-  await page.locator("select[data-qa='years']").selectOption("1995");
+    // Continue to home page
+    await signInPage.clickContinue();
 
-  // Newsletter & Offers checkboxes (optional but good to interact)
-  await page.locator("#newsletter").check();
-  await page.locator("#optin").check();
+    // Verify logged in
+    await expect(signInPage.getLoggedInUserLocator(name)).toBeVisible();
+  });
 
-  // Address Information
-  await page.locator("input[data-qa='first_name']").fill("Test");
-  await page.locator("input[data-qa='last_name']").fill("User");
-  await page.locator("input[data-qa='company']").fill("Test Company");
-  await page.locator("input[data-qa='address']").fill("123 Test Street");
-  await page.locator("select[data-qa='country']").selectOption("United States");
-  await page.locator("input[data-qa='state']").fill("California");
-  await page.locator("input[data-qa='city']").fill("Los Angeles");
-  await page.locator("input[data-qa='zipcode']").fill("90001");
-  await page.locator("input[data-qa='mobile_number']").fill("1234567890");
+  test("verify entered name and email persist on account information screen", async ({
+    signInPage,
+  }) => {
+    // Enter signup details
+    const name = faker.person.fullName();
+    const uniqueEmail = `testuser_${Date.now()}@email.com`;
 
-  // Click 'Create Account' button
-  await page.locator("button[data-qa='create-account']").click();
+    await signInPage.enterSignupDetails(name, uniqueEmail);
+    await signInPage.clickSignup();
 
-  // 6. Assert/Verify user is signed up in applications
-  await expect(page.locator("h2[data-qa='account-created']")).toBeVisible();
-  await expect(page.locator("text=Account Created!")).toBeVisible();
+    // Verify account info form is visible
+    await expect(signInPage.lblAccountInfo).toBeVisible();
 
-  // Click Continue
-  await page.locator("a[data-qa='continue-button']").click();
-
-  // Verify that message :- "Logged in as <ign in username>" is visible in navbar
-  const loggedInText = page.locator(`text=Logged in as ${name}`);
-  await expect(loggedInText).toBeVisible();
-});
-
-test("verify entered name and email persist on account information screen", async ({ page, navbarPage }) => {
-
-  // Navigate to login page
-  await page.goto("https://automationexercise.com/login");
-
-  // Click on Signup / Login button
-  await navbarPage.clickNavbarItem("Signup / Login");
-
-  // Generate name and email
-  const name = faker.person.fullName();
-  const uniqueEmail2 = `testuser_${Date.now()}@email.com`;
-
-  // Fill in name and email
-  await page.locator("input[data-qa='signup-name']").fill(name);
-  await page.locator("input[data-qa='signup-email']").fill(uniqueEmail2);
-
-  // Submit signup
-  await page.locator("button[data-qa='signup-button']").click();
-  await expect(page.locator("text=Enter Account Information")).toBeVisible();
-
-  await expect(page.locator("input[data-qa='name']")).toHaveValue(name);
-  await expect(page.locator("input[data-qa='email']")).toHaveValue(uniqueEmail2);
+    // Verify persisted values
+    await expect(signInPage.txtPersistedName).toHaveValue(name);
+    await expect(signInPage.txtPersistedEmail).toHaveValue(uniqueEmail);
+  });
 });

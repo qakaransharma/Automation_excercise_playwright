@@ -1,5 +1,4 @@
 import { test as base } from "../fixture/baseFixture";
-import { faker } from '@faker-js/faker';
 import {
   LoginPage,
   NavbarPage,
@@ -7,13 +6,7 @@ import {
   ProductsPage,
   SignInPage,
   LogoutPage,
-  // No UserData export from pages; we'll define the type locally.
 } from "../pages/index";
-
-type UserData = {
-  name: string;
-  email: string;
-};
 
 type MyFixtures = {
   loginPage: LoginPage;
@@ -21,7 +14,7 @@ type MyFixtures = {
   productsPage: ProductsPage;
   productsDetailsPage: ProductsDetailsPage;
   signInPage: SignInPage;
-  logoutPage: LogoutPage; 
+  logoutPage: LogoutPage;
 };
 
 export const test = base.extend<MyFixtures>({

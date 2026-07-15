@@ -1,8 +1,8 @@
 import { Locator, Page } from "@playwright/test";
-import { CommonUtils } from "../utils/commonUtils";
+import { BasePage } from "./base.page";
 
-export class SignInPage {
-  readonly page: Page;
+export class SignInPage extends BasePage {
+  // Signup form
   readonly txtSignupName: Locator;
   readonly txtSignupEmail: Locator;
   readonly btnSignup: Locator;
@@ -34,18 +34,21 @@ export class SignInPage {
   readonly lblAccountCreated: Locator;
   readonly btnContinue: Locator;
 
+  // Persisted name/email fields on account info screen
+  readonly txtPersistedName: Locator;
+  readonly txtPersistedEmail: Locator;
 
   constructor(page: Page) {
-    this.page = page;
+    super(page);
 
-    // Signup form locators
+    // Signup form
     this.txtSignupName = page.locator("input[data-qa='signup-name']");
     this.txtSignupEmail = page.locator("input[data-qa='signup-email']");
     this.btnSignup = page.locator("button[data-qa='signup-button']");
     this.lblSignupError = page.locator(".signup-form p");
 
-    // Account details form locators
-    this.lblAccountInfo = page.locator("text=Enter Account Information");
+    // Account details form
+    this.lblAccountInfo = page.getByText("Enter Account Information");
     this.rdoGenderMale = page.locator("#id_gender1");
     this.txtPassword = page.locator("input[data-qa='password']");
     this.selDays = page.locator("select[data-qa='days']");
@@ -54,7 +57,7 @@ export class SignInPage {
     this.chkNewsletter = page.locator("#newsletter");
     this.chkOptin = page.locator("#optin");
 
-    // Address details form locators
+    // Address details form
     this.txtFirstName = page.locator("input[data-qa='first_name']");
     this.txtLastName = page.locator("input[data-qa='last_name']");
     this.txtCompany = page.locator("input[data-qa='company']");
@@ -66,41 +69,52 @@ export class SignInPage {
     this.txtMobileNumber = page.locator("input[data-qa='mobile_number']");
     this.btnCreateAccount = page.locator("button[data-qa='create-account']");
 
-    // Success screen locators
+    // Success screen
     this.lblAccountCreated = page.locator("h2[data-qa='account-created']");
     this.btnContinue = page.locator("a[data-qa='continue-button']");
+
+    // Persisted fields
+    this.txtPersistedName = page.locator("input[data-qa='name']");
+    this.txtPersistedEmail = page.locator("input[data-qa='email']");
   }
 
   async enterSignupDetails(name: string, email: string) {
-    await CommonUtils.fill(this.txtSignupName, name);
-    await CommonUtils.fill(this.txtSignupEmail, email);
+    await this.txtSignupName.fill(name);
+    await this.txtSignupEmail.fill(email);
   }
 
   async clickSignup() {
-    await CommonUtils.click(this.btnSignup);
+    await this.btnSignup.click();
   }
 
   async getSignupErrorMessage(): Promise<string> {
-    return await CommonUtils.getText(this.lblSignupError);
+    return (await this.lblSignupError.textContent())?.trim() ?? "";
   }
 
-  async getSignupName(): Promise<string> {
-    const value = await CommonUtils.getAttribute(this.txtSignupName, "value");
-    return value ?? "";
+  async getSignupNameValidationMessage(): Promise<string> {
+    return this.txtSignupName.evaluate(
+      (element: HTMLInputElement) => element.validationMessage,
+    );
   }
 
-  async getSignupEmail(): Promise<string> {
-    const value = await CommonUtils.getAttribute(this.txtSignupEmail, "value");
-    return value ?? "";
+  async getSignupEmailValidationMessage(): Promise<string> {
+    return this.txtSignupEmail.evaluate(
+      (element: HTMLInputElement) => element.validationMessage,
+    );
   }
 
   async isAccountInfoFormVisible(): Promise<boolean> {
-    return await CommonUtils.isVisible(this.lblAccountInfo);
+    return this.lblAccountInfo.isVisible();
   }
 
-  async fillAccountDetails(password: string, day: string, month: string, year: string) {
-    await CommonUtils.click(this.rdoGenderMale);
-    await CommonUtils.fill(this.txtPassword, password);
+  async fillAccountDetails(
+    password: string,
+    day: string,
+    month: string,
+    year: string,
+  ) {
+    await this.rdoGenderMale.click();
+    await this.txtPassword.fill(password);
     await this.selDays.selectOption(day);
     await this.selMonths.selectOption(month);
     await this.selYears.selectOption(year);
@@ -119,30 +133,30 @@ export class SignInPage {
     zipcode: string;
     mobileNumber: string;
   }) {
-    await CommonUtils.fill(this.txtFirstName, details.firstName);
-    await CommonUtils.fill(this.txtLastName, details.lastName);
-    await CommonUtils.fill(this.txtCompany, details.company);
-    await CommonUtils.fill(this.txtAddress, details.address);
+    await this.txtFirstName.fill(details.firstName);
+    await this.txtLastName.fill(details.lastName);
+    await this.txtCompany.fill(details.company);
+    await this.txtAddress.fill(details.address);
     await this.selCountry.selectOption(details.country);
-    await CommonUtils.fill(this.txtState, details.state);
-    await CommonUtils.fill(this.txtCity, details.city);
-    await CommonUtils.fill(this.txtZipcode, details.zipcode);
-    await CommonUtils.fill(this.txtMobileNumber, details.mobileNumber);
+    await this.txtState.fill(details.state);
+    await this.txtCity.fill(details.city);
+    await this.txtZipcode.fill(details.zipcode);
+    await this.txtMobileNumber.fill(details.mobileNumber);
   }
 
   async clickCreateAccount() {
-    await CommonUtils.click(this.btnCreateAccount);
+    await this.btnCreateAccount.click();
   }
 
   async isAccountCreatedVisible(): Promise<boolean> {
-    return await CommonUtils.isVisible(this.lblAccountCreated);
+    return this.lblAccountCreated.isVisible();
   }
 
   async clickContinue() {
-    await CommonUtils.click(this.btnContinue);
+    await this.btnContinue.click();
   }
 
   getLoggedInUserLocator(name: string): Locator {
-    return this.page.locator(`text=Logged in as ${name}`);
+    return this.page.getByText(`Logged in as ${name}`);
   }
 }

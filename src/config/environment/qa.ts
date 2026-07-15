@@ -1,8 +1,10 @@
+require('dotenv').config();
+
 export const qaConfig = {
-    baseUrl: "https://automationexercise.com/",
-    emailAddress: "Test_QA@email.com",
-    password: "Abc@12345",
-    testUserFirstName: "Test",
-    testUserLastName: "User",
-    postalCode: 123456,
-  };
+  baseUrl: process.env.BASE_URL || "https://automationexercise.com",
+  emailAddress: process.env.QA_EMAIL || "",
+  password: process.env.QA_PASSWORD || "",
+  testUserFirstName: process.env.QA_FIRST_NAME || "",
+  testUserLastName: process.env.QA_LAST_NAME || "",
+  postalCode: Number(process.env.QA_POSTAL_CODE) || 0,
+};

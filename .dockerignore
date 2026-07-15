@@ -1,0 +1,13 @@
+node_modules
+.git
+.env
+auth
+logs
+reports
+allure-results
+allure-report
+test-results
+playwright-report
+screenshots
+blob-report
+.github

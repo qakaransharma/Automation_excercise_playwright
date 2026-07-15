@@ -1,31 +1,27 @@
 import { Locator, Page } from "@playwright/test";
-import { CommonUtils } from "../utils/commonUtils";
+import { BasePage } from "./base.page";
 
-export class ProductsPage {
-  readonly page: Page;
+export class ProductsPage extends BasePage {
   readonly allProductsHeader: Locator;
   readonly productsList: Locator;
   readonly viewProductButtons: Locator;
 
   constructor(page: Page) {
-    this.page = page;
-    this.allProductsHeader = page.locator("text=All Products");
+    super(page);
+    this.allProductsHeader = page.getByText("All Products");
     this.productsList = page.locator(".features_items");
     this.viewProductButtons = page.locator("a[href*='product_details']");
   }
 
   async isAllProductsHeaderVisible(): Promise<boolean> {
-    // return await this.allProductsHeader.isVisible();
-    return await CommonUtils.isVisible(this.allProductsHeader);
+    return this.allProductsHeader.isVisible();
   }
 
   async isProductsListVisible(): Promise<boolean> {
-    // return await this.productsList.isVisible();
-    return await CommonUtils.isVisible(this.productsList);
+    return this.productsList.isVisible();
   }
 
   async clickViewProductOfFirstProduct(): Promise<void> {
-    // await this.viewProductButtons.first().click();
-    await CommonUtils.click(this.viewProductButtons.first());
+    await this.viewProductButtons.first().click();
   }
 }

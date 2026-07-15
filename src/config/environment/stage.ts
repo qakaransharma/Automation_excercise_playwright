@@ -1,9 +1,10 @@
+require('dotenv').config();
+
 export const stageConfig = {
-    baseUrl: "https://automationexercise.com/",
-    emailAddress: "karan@email.com",
-    password: "Abc@12345",
-    testUserFirstName: "Karan",
-    testUserLastName: "Sharma",
-    postalCode: 123456,
-  };
-  
+  baseUrl: process.env.BASE_URL || "https://automationexercise.com",
+  emailAddress: process.env.STAGE_EMAIL || "",
+  password: process.env.STAGE_PASSWORD || "",
+  testUserFirstName: process.env.STAGE_FIRST_NAME || "",
+  testUserLastName: process.env.STAGE_LAST_NAME || "",
+  postalCode: Number(process.env.STAGE_POSTAL_CODE) || 0,
+};
