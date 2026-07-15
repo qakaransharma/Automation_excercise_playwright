@@ -19,7 +19,7 @@ export default defineConfig({
   workers: WORKERS,
   reporter: [
     ["html", { open: "never", outputFolder: "reports/playwright" }],
-    ["allure-playwright", { outputFolder: "reports/allure-results" }],
+    ["allure-playwright", { resultsDir: "allure-results" }],
   ],
   outputDir: "./test-results",
 
